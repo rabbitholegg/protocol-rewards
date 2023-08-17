@@ -65,6 +65,8 @@ interface IProtocolRewards {
     /// @notice Low-level ETH transfer has failed
     error TRANSFER_FAILED();
 
+    error INVALID_AMOUNT();
+
     /// @notice Generic function to deposit ETH for a recipient, with an optional comment
     /// @param to Address to deposit to
     /// @param to Reason system reason for deposit (used for indexing)
@@ -77,30 +79,6 @@ interface IProtocolRewards {
     /// @param reasons optional bytes4 hash for indexing
     /// @param comment Optional comment to include with mint
     function depositBatch(address[] calldata recipients, uint256[] calldata amounts, bytes4[] calldata reasons, string calldata comment) external payable;
-
-    /// @notice Used by Zora ERC-721 & ERC-1155 contracts to deposit protocol rewards
-    /// @param creator Creator for NFT rewards
-    /// @param creatorReward Creator reward amount
-    /// @param createReferral Creator referral
-    /// @param createReferralReward Creator referral reward
-    /// @param mintReferral Mint referral user
-    /// @param mintReferralReward Mint referral amount
-    /// @param firstMinter First minter reward
-    /// @param firstMinterReward First minter reward amount
-    /// @param zora ZORA recipient
-    /// @param zoraReward ZORA amount
-    function depositRewards(
-        address creator,
-        uint256 creatorReward,
-        address createReferral,
-        uint256 createReferralReward,
-        address mintReferral,
-        uint256 mintReferralReward,
-        address firstMinter,
-        uint256 firstMinterReward,
-        address zora,
-        uint256 zoraReward
-    ) external payable;
 
     /// @notice Withdraw protocol rewards
     /// @param to Withdraws from msg.sender to this address

@@ -2,7 +2,6 @@
 pragma solidity 0.8.17;
 
 import "../ProtocolRewardsTest.sol";
-import "../../src/abstract/RewardSplits.sol";
 
 contract WithdrawTest is ProtocolRewardsTest {
     function setUp() public override {

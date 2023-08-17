@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-import {EIP712} from "./lib/EIP712.sol";
+import {EIP712} from "solady/utils/EIP712.sol";
+import {Ownable} from "solady/auth/Ownable.sol";
 import {IProtocolRewards} from "./interfaces/IProtocolRewards.sol";
 
 /// @title ProtocolRewards
 /// @notice Manager of deposits & withdrawals for protocol rewards
-contract ProtocolRewards is Enjoy, IProtocolRewards, EIP712 {
+contract ProtocolRewards is IProtocolRewards, EIP712, Ownable {
     /// @notice The EIP-712 typehash for gasless withdraws
     bytes32 public constant WITHDRAW_TYPEHASH = keccak256("Withdraw(address from,address to,uint256 amount,uint256 nonce,uint256 deadline)");
 
@@ -19,7 +20,18 @@ contract ProtocolRewards is Enjoy, IProtocolRewards, EIP712 {
     /// @notice Total Balance across all accounts
     uint256 public totalBalance;
 
-    constructor() payable EIP712("ProtocolRewards", "1") {}
+    constructor() payable EIP712() {}
+
+    function _domainNameAndVersion()
+        internal
+        pure
+        virtual
+        override
+        returns (string memory name, string memory version)
+    {
+        name = "ProtocolRewards";
+        version = "1";
+    }
 
     /// @notice The total amount of ETH held in the contract
     function totalSupply() external view returns (uint256) {
@@ -183,7 +195,7 @@ contract ProtocolRewards is Enjoy, IProtocolRewards, EIP712 {
             withdrawHash = keccak256(abi.encode(WITHDRAW_TYPEHASH, from, to, amount, nonces[from]++, deadline));
         }
 
-        bytes32 digest = _hashTypedDataV4(withdrawHash);
+        bytes32 digest = _hashTypedData(withdrawHash);
 
         address recoveredAddress = ecrecover(digest, v, r, s);
 
